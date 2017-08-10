@@ -1,0 +1,33 @@
+<% include ../partials/header %>
+
+<div class="container">
+  <header class="jumbotron">
+    <div class="container">
+      <h1>Welcome to Zoovie</h1>
+      <p>That's a fatty fatman!</p>
+      <p>
+        <button name="btn btn-lg"><a href="/content/new">Add new content</a></button>
+      </p>
+    </div>
+  </header>
+  <div class="row">
+    <div class="col-lg-12">
+      <h3>Most popular content</h3>
+    </div>
+  </div>
+  <div class="row text-center">
+    <% content.forEach((content) => { %>
+      <div class="col-md-3 col-sm-6">
+        <div class="thumbnail">
+          <img src="<%= content.media %>" alt="">
+          <div class="caption">
+            <h4><%= content.name %></h4>
+          </div>
+            <a href="/content/<%= content._id %>" class="btn btn-primary">More Info</a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<% include ../partials/footer %>
