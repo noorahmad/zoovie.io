@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 //Schema Setup
-let contentSchema = new mongoose.Schema({
+const contentSchema = new mongoose.Schema({
   name: String,
   media: String,
   description: String,
