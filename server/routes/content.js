@@ -50,23 +50,14 @@ router.get('/:id', (req, res) => {
 })
 
 //Edit content route
-router.get('/:id/edit', (req, res) => {
-  //is user logged in?
-  if (req.isAuthenticated()) {
+router.get('/:id/edit', checkContentOwnership, (req, res) => {
     Content.findById(req.params.id, (err, foundContent) => {
-      if (err) {
-        res.redirect('/content')
-      } else {
-        res.render('content/edit', {content: foundContent})
-      }
+          res.render('content/edit', {content: foundContent})
     })
-  } else {
-    console.log("You must log in to do that")
-    res.send('You need to log in to continue')
-  }
 })
 
-router.put('/:id', (req, res) => {
+//update
+router.put('/:id', checkContentOwnership, (req, res) => {
   //find and update correct conten
   Content.findByIdAndUpdate(req.params.id, req.body.content, (err, updateContent) => {
     if (err) {
@@ -79,7 +70,7 @@ router.put('/:id', (req, res) => {
 })
 
 //DELETE
-router.delete('/:id', (req, res) => {
+router.delete('/:id', checkContentOwnership, (req, res) => {
   Content.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
       res.redirect('/content')
@@ -95,6 +86,25 @@ function isLoggedIn(req, res, next) {
     return next()
   }
   res.redirect('/login')
+}
+
+function checkContentOwnership(req, res, next) {
+  if (req.isAuthenticated()) {
+    Content.findById(req.params.id, (err, foundContent) => {
+      if (err) {
+        res.redirect('back')
+      } else {
+        //does user own the content
+        if (foundContent.author.id.equals(req.user._id)) {
+          next()
+        } else {
+          res.redirect('back')
+        }
+      }
+    })
+  } else {
+    res.redirect('back')
+  }
 }
 
 module.exports = router
