@@ -22,32 +22,32 @@ const data = [
 
 var seedDB = () => {
   Content.remove({}, (err) => {
-    if (err) {
-      console.log(err)
-    }
-      console.log('removed content')
-      data.forEach((seed) => {
-        Content.create(seed, (err, content) => {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log('added a content')
-            Comment.create(
-              {
-                text: "this is a great content",
-                author: "Homer"
-              }, (err, comment) => {
-                if (err) {
-                  console.log(err)
-                } else {
-                  content.comments.push(comment)
-                  content.save()
-                  console.log('created a comment')
-                }
-              })
-          }
-        })
-      })
+    // if (err) {
+    //   console.log(err)
+    // }
+    //   console.log('removed content')
+    //   data.forEach((seed) => {
+    //     Content.create(seed, (err, content) => {
+    //       if (err) {
+    //         console.log(err)
+    //       } else {
+    //         console.log('added a content')
+    //         Comment.create(
+    //           {
+    //             text: "this is a great content",
+    //             author: "Homer"
+    //           }, (err, comment) => {
+    //             if (err) {
+    //               console.log(err)
+    //             } else {
+    //               content.comments.push(comment)
+    //               content.save()
+    //               console.log('created a comment')
+    //             }
+    //           })
+    //       }
+    //     })
+    //   })
   })
 }
 
