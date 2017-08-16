@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Content = require('../models/content')
+const middleware = require('../middleware')
 
 //index route
 router.get('/', (req, res) => {
@@ -15,7 +16,7 @@ router.get('/', (req, res) => {
 })
 
 //NEW - create
-router.post('/', isLoggedIn, (req, res) => {
+router.post('/', middleware.isLoggedIn, (req, res) => {
   const name = req.body.name
   const media = req.body.media
   const desc = req.body.description
@@ -34,7 +35,7 @@ router.post('/', isLoggedIn, (req, res) => {
 })
 
 //NEW - show
-router.get('/new', isLoggedIn, (req, res) => {
+router.get('/new', middleware.isLoggedIn, (req, res) => {
   res.render('content/new.ejs')
 })
 
@@ -50,14 +51,14 @@ router.get('/:id', (req, res) => {
 })
 
 //Edit content route
-router.get('/:id/edit', checkContentOwnership, (req, res) => {
+router.get('/:id/edit', middleware.checkContentOwnership, (req, res) => {
     Content.findById(req.params.id, (err, foundContent) => {
           res.render('content/edit', {content: foundContent})
     })
 })
 
 //update
-router.put('/:id', checkContentOwnership, (req, res) => {
+router.put('/:id', middleware.checkContentOwnership, (req, res) => {
   //find and update correct conten
   Content.findByIdAndUpdate(req.params.id, req.body.content, (err, updateContent) => {
     if (err) {
@@ -70,7 +71,7 @@ router.put('/:id', checkContentOwnership, (req, res) => {
 })
 
 //DELETE
-router.delete('/:id', checkContentOwnership, (req, res) => {
+router.delete('/:id', middleware.checkContentOwnership, (req, res) => {
   Content.findByIdAndRemove(req.params.id, (err) => {
     if (err) {
       res.redirect('/content')
@@ -79,32 +80,5 @@ router.delete('/:id', checkContentOwnership, (req, res) => {
     }
   })
 })
-
-//middleware
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next()
-  }
-  res.redirect('/login')
-}
-
-function checkContentOwnership(req, res, next) {
-  if (req.isAuthenticated()) {
-    Content.findById(req.params.id, (err, foundContent) => {
-      if (err) {
-        res.redirect('back')
-      } else {
-        //does user own the content
-        if (foundContent.author.id.equals(req.user._id)) {
-          next()
-        } else {
-          res.redirect('back')
-        }
-      }
-    })
-  } else {
-    res.redirect('back')
-  }
-}
 
 module.exports = router
